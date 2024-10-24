@@ -1,0 +1,50 @@
+services:
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/app
+      - /app/frontend/node_modules
+    env_file:
+      - .env
+    init: true
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+    init: true
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:11.6.1-rc
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./db/initsql.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - mariadb:/var/lib/mysql
+    environment:
+      TZ: Asia/Tokyo
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 15s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  mariadb:
