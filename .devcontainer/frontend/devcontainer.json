@@ -1,8 +1,0 @@
-{
-    "name": "frontend",
-    "dockerComposeFile": ["../../compose.yml"],
-    "service": "frontend",
-    "shutdownAction": "stopCompose",
-    "workspaceFolder": "/app/frontend",
-    "remoteUser": "node"
-}
