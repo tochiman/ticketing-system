@@ -1,0 +1,56 @@
+name: Issues Report
+description: "問題点やTodoリストをここに追加するなりしなさい"
+title: "[Issues]: "
+labels: ["enhancement", "bug"]
+assignees:
+  - tochiman
+body:
+  - type: checkboxes
+    id: check
+    attributes:
+      label: ⚠️注意事項
+      description: 以下の内容を守った上で作成すること
+      options:
+        - label: Assigneesを自分自身と関連する担当者を割り当てること
+          required: true
+        - label: Labelsも必ずつけること。関係ないものは外して良い。
+          required: true          
+        - label: Projectsにも必ず紐づけること
+          required: true
+        - label: 作業開始時はDevelopmentを使用してブランチを作成すること
+          required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 種類
+      description: What version of our software are you running?
+      multiple: true
+      options:
+        - 問題(issue, bug)
+        - やることリスト(Todo List)
+    validations:
+      required: true
+  - type: input
+    id: description
+    attributes:
+      label: 概要
+      description: 端的に述べてください
+      placeholder: ex. 〇〇ページでバグがある, 〇〇を開発する
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: 詳細
+      description: 細かく何が起きているかを述べなさい
+      placeholder: 箇条書きで書きなさい
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://example.com)
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
