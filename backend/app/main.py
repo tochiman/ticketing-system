@@ -1,10 +1,11 @@
 from fastapi import FastAPI
 import os
 
-app = FastAPI()
+app = FastAPI(root_path= "/api/v1")
 
 root = os.getenv('ROOT_PATH')
 
-@app.get("%s" % root)
-async def root():
-    return {"message": "Hello World"}
+@app.get("/scan")
+async def root(qr_code:str):
+    return f"{qr_code} by fastAPI"  
+    # return {"{UID}": "{item_num}"}
