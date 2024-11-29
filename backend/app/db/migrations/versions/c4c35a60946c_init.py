@@ -31,7 +31,7 @@ def upgrade() -> None:
     sa.Column('customer_id', sqlalchemy_utils.types.uuid.UUIDType(binary=False)            , default=uuid.uuid4, nullable=False),
     sa.Column('name', sa.String(length=256), nullable=False),
     sa.Column('email', sqlalchemy_utils.types.email.EmailType(length=255), nullable=False),
-    sa.Column('password', sqlalchemy_utils.types.password.PasswordType(length=1137), nullable=False),
+    sa.Column('password', sqlalchemy_utils.types.password.PasswordType(max_length=1137), nullable=False),
     sa.Column('points', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('customer_id'),
     sa.UniqueConstraint('email')
@@ -40,7 +40,7 @@ def upgrade() -> None:
     sa.Column('organization_id', sqlalchemy_utils.types.uuid.UUIDType(binary=False)            , default=uuid.uuid4, nullable=False),
     sa.Column('name', sa.String(length=256), nullable=False),
     sa.Column('email', sqlalchemy_utils.types.email.EmailType(length=255), nullable=False),
-    sa.Column('password', sqlalchemy_utils.types.password.PasswordType(length=1137), nullable=False),
+    sa.Column('password', sqlalchemy_utils.types.password.PasswordType(max_length=1137), nullable=False),
     sa.PrimaryKeyConstraint('organization_id'),
     sa.UniqueConstraint('email')
     )
@@ -79,7 +79,7 @@ def upgrade() -> None:
     sa.Column('organization_id', sqlalchemy_utils.types.uuid.UUIDType(binary=False)            , default=uuid.uuid4, nullable=False),
     sa.Column('name', sa.String(length=256), nullable=False),
     sa.Column('email', sqlalchemy_utils.types.email.EmailType(length=255), nullable=False),
-    sa.Column('password', sqlalchemy_utils.types.password.PasswordType(length=1137), nullable=False),
+    sa.Column('password', sqlalchemy_utils.types.password.PasswordType(max_length=1137), nullable=False),
     sa.Column('address', sa.String(length=256), nullable=False),
     sa.Column('latitude', sa.String(length=11), nullable=False),
     sa.Column('longitude', sa.String(length=11), nullable=False),
