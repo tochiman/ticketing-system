@@ -19,6 +19,15 @@ item_to_allergy = Table(
     Column("allergy_id", Integer, ForeignKey("allergy.allergy_id"), primary_key=True),
 )
 
+customer_to_allergy = Table(
+    "customer_to_allergy",
+    Base.metadata,
+    Column("customer_id", UUIDType(binary=False), ForeignKey("customer.customer_id"), primary_key=True),
+    Column("allergy_id", Integer, ForeignKey("allergy.allergy_id"), primary_key=True),
+)
+
+
+
 class Organization(Base):
     __tablename__ = "organization"
 
@@ -73,6 +82,7 @@ class Customer(Base):
 
     orders = relationship("Order", back_populates="customer")
     point_history = relationship("PointHistory", back_populates="customer")
+    allergy = relationship("Allergy", secondary=customer_to_allergy, back_populates="customer")
 
 class Order(Base):
     __tablename__ = "order"
@@ -123,6 +133,7 @@ class Allergy(Base):
     name = Column(String(256), nullable=False)
 
     item = relationship("Item", secondary=item_to_allergy, back_populates="allergy")
+    customer = relationship("Customer", secondary=customer_to_allergy, back_populates="allergy")
 
 class Session(Base):
     __tablename__ = "session"
