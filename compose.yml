@@ -32,7 +32,6 @@ services:
     ports:
       - '3306:3306'
     volumes:
-      - ./db/initsql.sql:/docker-entrypoint-initdb.d/init.sql
       - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
       - mariadb:/var/lib/mysql
     environment:
