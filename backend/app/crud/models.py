@@ -34,6 +34,7 @@ class Organization(Base):
     organization_id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     name = Column(String(256), nullable=False)
     email = Column(EmailType, nullable=False, unique=True)
+    phone = Column(String(11), nullable=False)
     password = Column(PasswordType(schemes=["pbkdf2_sha512", "md5_crypt"], deprecated=["md5_crypt"]), nullable=False)
 
     stores = relationship("Store", back_populates="organization")
@@ -47,6 +48,7 @@ class Store(Base):
     name = Column(String(256), nullable=False)
     email = Column(EmailType, nullable=False, unique=True)
     password = Column(PasswordType(schemes=["pbkdf2_sha512", "md5_crypt"], deprecated=["md5_crypt"]), nullable=False)
+    phone = Column(String(11), nullable=False)
     address = Column(String(256), nullable=False)
     latitude = Column(String(11), nullable=False)
     longitude = Column(String(11), nullable=False)
