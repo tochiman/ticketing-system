@@ -30,9 +30,10 @@
 	},
 	"prepare": "svelte-kit sync",
 	"dependencies": {
-		"@kuiper/svelte-scan-qrcode": "^0.0.5",
 		"flowbite": "^2.5.2",
 		"flowbite-svelte": "^0.47.4",
-		"flowbite-svelte-icons": "^2.0.2"
+		"flowbite-svelte-icons": "^2.0.2",
+		"leaflet": "^1.9.4"
+		"@kuiper/svelte-scan-qrcode": "^0.0.5",
 	}
 }
