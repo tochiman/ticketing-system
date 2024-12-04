@@ -16,7 +16,8 @@ async def add_org(add_org_request: models_org.AddOrgRequest, db = Depends(get_as
     name = add_org_request.name
     email = add_org_request.email
     password = add_org_request.password
-    return await org.add_org(db, name, email, password)
+    phone = add_org_request.phone
+    return await org.add_org(db=db, name=name, email=email, phone=phone, password=password)
 
 
 @router.post("/login")
@@ -30,7 +31,10 @@ async def add_store(add_store_request: models_org.AddStoreRequest, db = Depends(
     email = add_store_request.email
     password = add_store_request.password
     address = add_store_request.address
+    phone = add_store_request.phone
+    latitude = add_store_request.latitude
+    longitude = add_store_request.longitude
     open_time = add_store_request.open_time
     close_time = add_store_request.close_time
     organization_id = current_org.organization_id
-    return await org.add_store(db, organization_id, name, email, password, address, open_time, close_time)
+    return await org.add_store(db=db, organization_id=organization_id, name=name, email=email, password=password, address=address, phone=phone, latitude=latitude, longitude=longitude, open_time=open_time, close_time=close_time)
