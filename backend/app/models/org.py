@@ -7,12 +7,14 @@ from models.base import BaseSchema
 class AddOrgRequest(BaseSchema):
     name: str = Field(..., max_items=256)
     email: EmailStr
+    phone: str
     password: str
 
 
 class AddOrgResponse(BaseSchema):
     name: str
     email: EmailStr
+    phone: str
 
 
 class AddStoreRequest(BaseSchema):
@@ -20,6 +22,9 @@ class AddStoreRequest(BaseSchema):
     email: EmailStr
     password: str
     address:  str
+    phone: str
+    latitude: str
+    longitude: str
     open_time: time
     close_time: time
 
@@ -34,5 +39,8 @@ class AddStoreResponse(BaseSchema):
     name: str = Field(..., max_items=256)
     email: EmailStr
     address:  str
+    phone: str
+    latitude: str
+    longitude: str
     open_time: str
     close_time: str
