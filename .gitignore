@@ -1,5 +1,5 @@
 .env
 __pycache__/
 node_modules/
-yarn-error.log
-backend/app/__pycache__
+*.log
+*.pyc
