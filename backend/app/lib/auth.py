@@ -2,7 +2,7 @@ import secrets
 from datetime import datetime, timedelta, timezone, date
 
 from fastapi import Cookie, Depends, HTTPException, Response, status
-from sqlalchemy.sql import select
+from sqlalchemy.sql import select, delete
 from passlib.context import CryptContext
 from pydantic import BaseModel, EmailStr
 from uuid import UUID
@@ -111,6 +111,11 @@ async def create_session_id(db) -> str:
         if await not_exist_session_id(db, session_id):
             return session_id
 
+async def delete_session(db, session_id, user_type):
+    from logging import getLogger, StreamHandler
+    stmt = delete(models.Session).where(models.Session.session_id == session_id, models.Session.user_type == user_type)
+    await db.execute(stmt)
+    return
 
 class LoginData(BaseModel):
     email: EmailStr
@@ -167,14 +172,35 @@ class GetCurrentUser:
         return user
 
 
+class Logout:
+    def __init__(self, user_type):
+        self.user_type = user_type
+
+
+    async def __call__(self, response: Response, db = Depends(get_async_db), session_id: str = Cookie(None)):
+        if not session_id or await not_exist_session_id(db, session_id):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        await delete_session(db, session_id, self.user_type)
+        response.delete_cookie(
+            key="session_id"
+        )
+
+
 # Customer
 customer_login = Login(1)
 get_current_customer = GetCurrentUser(1)
+customer_logout = Logout(1)
 
 # Organization
 organization_login = Login(2)
 get_current_organization = GetCurrentUser(2)
+organization_logout = Logout(2)
 
 # Store
 store_login = Login(3)
 get_current_store = GetCurrentUser(3)
+store_logout = Logout(3)

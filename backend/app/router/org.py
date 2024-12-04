@@ -5,7 +5,7 @@ from database import get_async_db
 from models import org as models_org
 from crud import org
 
-from lib.auth import organization_login, get_current_organization
+from lib.auth import organization_login, get_current_organization, organization_logout
 
 router = APIRouter()
 
@@ -34,3 +34,8 @@ async def add_store(add_store_request: models_org.AddStoreRequest, db = Depends(
     close_time = add_store_request.close_time
     organization_id = current_org.organization_id
     return await org.add_store(db, organization_id, name, email, password, address, open_time, close_time)
+
+
+@router.post("/logout")
+async def logout_org(_ = Depends(organization_logout)):
+    return
