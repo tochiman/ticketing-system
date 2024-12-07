@@ -9,9 +9,7 @@ async def add_customer(db, name, email, password, points):
     await db.refresh(db_obj)
     return db_obj
 
-async def edit_customer(db, name, email, password, points):
-    current_customer = auth.get_current_customer
-    id = current_customer.id
+async def edit_customer(id, db, name, email, password, points):
     db_obj = auth.get_user_by_id(db,id,1)
     db_obj.name = name
     db_obj.email = email
