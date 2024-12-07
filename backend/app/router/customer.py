@@ -25,7 +25,8 @@ async def show_customer(current_customer = Depends(get_current_customer)):
     name = current_customer.name
     email = current_customer.email
     password = current_customer.password
-    return {name: name, email:email, password:password}
+    points = current_customer.point
+    return {name: name, email:email, password:password, points: points}
 
 """ ログイン中ユーザ(customer)のdata編集 (name, email, password) """
 @router.post("/edit_customer")
