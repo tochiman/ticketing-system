@@ -13,3 +13,13 @@ class AddCustomerRequest(BaseSchema):
 class AddCustomerResponse(BaseSchema):
     name: str
     email: EmailStr
+
+class EditCustomerRequest(BaseSchema):
+    name: str
+    email: EmailStr
+    password: str
+    points: int
+    
+class EditCustomerResponse(BaseSchema):
+    name: str
+    email: EmailStr
