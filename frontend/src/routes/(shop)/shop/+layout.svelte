@@ -6,7 +6,7 @@
 
 
 	<Navbar let:hidden let:toggle>
-	  <NavBrand href="/">
+	  <NavBrand href="/shop">
 		<img src="/images/logo.svg" class="mr-3 h-6 sm:h-9" alt="Logo" />
 		<span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
 		  サイト名
