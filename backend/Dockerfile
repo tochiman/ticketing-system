@@ -13,5 +13,6 @@ COPY ./requirements.txt .
 RUN pip install -U pip && pip install --no-cache-dir --upgrade -r ./requirements.txt
 
 COPY ./app/* ./
+RUN chmod +x run.sh
 
 CMD ["/bin/bash", "-c", "./app/run.sh"]
