@@ -39,7 +39,14 @@ async def add_store(add_store_request: models_org.AddStoreRequest, db = Depends(
     organization_id = current_org.organization_id
     return await org.add_store(db=db, organization_id=organization_id, name=name, email=email, password=password, address=address, phone=phone, latitude=latitude, longitude=longitude, open_time=open_time, close_time=close_time)
 
+@router.get("/me")
+async def me(current_org = Depends(organization_login)):
+    return current_org
 
 @router.post("/logout")
 async def logout_org(_ = Depends(organization_logout)):
     return
+
+@router.get("/store-list")
+async def store_list(current_org = Depends(organization_login)):
+    return current_org.stores
