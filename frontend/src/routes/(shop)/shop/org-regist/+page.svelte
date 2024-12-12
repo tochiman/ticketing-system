@@ -1,4 +1,5 @@
 <script>
+  import { Button } from 'flowbite-svelte';
   import { goto } from '$app/navigation'; 
 
   let name = '';
@@ -15,7 +16,7 @@
           'Content-Type': 'application/json',
         },
         //phoneを足す
-        body: JSON.stringify({ email, password, name}),
+        body: JSON.stringify({ email, password, name, phone}),
       });
 
       if (response.status === 401) {
@@ -55,7 +56,7 @@
   <div class="mb-6">
     <label for="phone" class="block mb-2 text-sm font-medium text-gray-900">電話番号</label>
     <input
-      type="tel"
+      type="tell"
       id="phone"
       bind:value={phone}
       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -86,11 +87,11 @@
   </div>
   
   <div class="flex gap-4">
-    <button type="button" class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 w-full">
+    <Button on:click={()=>goto(`/shop`)} type="button" class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 w-full">
       戻る
-    </button>
-    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 w-full">
+    </Button>
+    <Button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 w-full">
       登録
-    </button>
+    </Button>
   </div>
 </form>
