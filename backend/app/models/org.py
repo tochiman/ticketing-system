@@ -32,7 +32,6 @@ class AddStoreRequest(BaseSchema):
     @field_validator("open_time", "close_time", mode="before")
     def validate_time(cls, value):
         return datetime.strptime(value, '%H:%M').time()
-        # return value
 
 
 class AddStoreResponse(BaseSchema):
@@ -42,5 +41,5 @@ class AddStoreResponse(BaseSchema):
     phone: str
     latitude: str
     longitude: str
-    open_time: str
-    close_time: str
+    open_time: time
+    close_time: time
