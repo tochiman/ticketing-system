@@ -7,7 +7,7 @@ from crud import customer
 
 from lib.auth import customer_login, customer_logout, get_current_customer
 
-router = APIRouter()
+router = APIRouter(tags=["customer"])
 
 # テンプレートのため要確認
 @router.post("/add_customer")

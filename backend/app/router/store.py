@@ -7,7 +7,7 @@ from models import org as models_store
 from crud import store
 from lib.auth import store_login, get_current_store
 
-router = APIRouter()
+router = APIRouter(tags=["store"])
 
 @router.post("/login")
 async def login_store(_ =  Depends(store_login)):
