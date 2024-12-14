@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from typing import List
 
 from database import get_async_db
 
@@ -40,7 +41,7 @@ async def add_store(add_store_request: models_org.AddStoreRequest, db = Depends(
     return await org.add_store(db=db, organization_id=organization_id, name=name, email=email, password=password, address=address, phone=phone, latitude=latitude, longitude=longitude, open_time=open_time, close_time=close_time)
 
 @router.get("/me")
-async def me(current_org = Depends(organization_login)):
+async def me(current_org = Depends(get_current_organization)):
     return current_org
 
 @router.post("/logout")
@@ -48,5 +49,6 @@ async def logout_org(_ = Depends(organization_logout)):
     return
 
 @router.get("/store-list")
-async def store_list(current_org = Depends(organization_login)):
-    return current_org.stores
+async def store_list(db = Depends(get_async_db), current_org = Depends(get_current_organization)) -> List[models_org.AddStoreResponse]:
+    stores = await org.get_stores_by_org_id(db, current_org.organization_id)
+    return [models_org.AddStoreResponse.model_validate(store) for store in stores]

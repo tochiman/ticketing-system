@@ -91,6 +91,7 @@ class Order(Base):
 
     order_id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     customer_id = Column(UUIDType(binary=False), ForeignKey("customer.customer_id"), nullable=False)
+    store_id = Column(UUIDType(binary=False), ForeignKey("store.store_id"), nullable=False)
     status = Column(Integer, nullable=False)
 
     customer = relationship("Customer", back_populates="orders")

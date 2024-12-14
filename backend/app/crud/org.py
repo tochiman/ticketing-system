@@ -1,3 +1,5 @@
+from sqlalchemy.sql import select
+
 from crud import models
 
 async def add_org(db, name, email, password, phone):
@@ -14,3 +16,8 @@ async def add_store(db, organization_id, name, email, password, address, phone, 
     await db.flush()
     await db.refresh(db_obj)
     return db_obj
+
+async def get_stores_by_org_id(db, organization_id):
+    stmt = select(models.Store).where(models.Store.organization_id == organization_id)
+    stores = (await db.execute(stmt)).scalars().all()
+    return stores
