@@ -15,7 +15,7 @@ class AddCustomerResponse(BaseSchema):
     email: EmailStr
 
 class EditCustomerRequest(BaseSchema):
-    name: str
+    name: str = Field(..., max_items=256)
     email: EmailStr
     password: str
     points: int
