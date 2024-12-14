@@ -27,7 +27,6 @@ customer_to_allergy = Table(
 )
 
 
-
 class Organization(Base):
     __tablename__ = "organization"
 
@@ -39,6 +38,7 @@ class Organization(Base):
 
     stores = relationship("Store", back_populates="organization")
     items = relationship("Item", back_populates="organization")
+
 
 class Store(Base):
     __tablename__ = "store"
@@ -58,6 +58,7 @@ class Store(Base):
     organization = relationship("Organization", back_populates="stores")
     items = relationship("Item", secondary=available, back_populates="store")
 
+
 class Item(Base):
     __tablename__ = "item"
 
@@ -73,6 +74,7 @@ class Item(Base):
     store = relationship("Store", secondary=available, back_populates="items")
     allergy = relationship("Allergy", secondary=item_to_allergy, back_populates="item")
 
+
 class Customer(Base):
     __tablename__ = "customer"
 
@@ -86,6 +88,7 @@ class Customer(Base):
     point_history = relationship("PointHistory", back_populates="customer")
     allergy = relationship("Allergy", secondary=customer_to_allergy, back_populates="customer")
 
+
 class Order(Base):
     __tablename__ = "order"
 
@@ -98,6 +101,7 @@ class Order(Base):
     payment = relationship("Payment", back_populates="order", uselist=False)
     order_details = relationship("OrderDetail", back_populates="order")
 
+
 class OrderDetail(Base):
     __tablename__ = "order_detail"
 
@@ -108,6 +112,7 @@ class OrderDetail(Base):
 
     order = relationship("Order", back_populates="order_details")
     item = relationship("Item", back_populates="order_details")
+
 
 class Payment(Base):
     __tablename__ = "payment"
@@ -120,6 +125,7 @@ class Payment(Base):
 
     order = relationship("Order", back_populates="payment", uselist=False)
 
+
 class PointHistory(Base):
     __tablename__ = "point_history"
 
@@ -130,6 +136,7 @@ class PointHistory(Base):
 
     customer = relationship("Customer", back_populates="point_history")
 
+
 class Allergy(Base):
     __tablename__ = "allergy"
 
@@ -138,6 +145,7 @@ class Allergy(Base):
 
     item = relationship("Item", secondary=item_to_allergy, back_populates="allergy")
     customer = relationship("Customer", secondary=customer_to_allergy, back_populates="allergy")
+
 
 class Session(Base):
     __tablename__ = "session"

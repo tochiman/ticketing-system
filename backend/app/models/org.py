@@ -1,23 +1,24 @@
 from datetime import datetime, time
 
 from pydantic import Field, EmailStr, field_validator
+import uuid
 
 from models.base import BaseSchema
 
-class AddOrgRequest(BaseSchema):
+class OrgRequest(BaseSchema):
     name: str = Field(..., max_items=256)
     email: EmailStr
     phone: str
     password: str
 
 
-class AddOrgResponse(BaseSchema):
+class OrgResponse(BaseSchema):
     name: str
     email: EmailStr
     phone: str
 
 
-class AddStoreRequest(BaseSchema):
+class StoreRequest(BaseSchema):
     name: str = Field(..., max_items=256)
     email: EmailStr
     password: str
@@ -34,7 +35,7 @@ class AddStoreRequest(BaseSchema):
         return datetime.strptime(value, '%H:%M').time()
 
 
-class AddStoreResponse(BaseSchema):
+class StoreResponse(BaseSchema):
     name: str = Field(..., max_items=256)
     email: EmailStr
     address:  str
@@ -43,3 +44,7 @@ class AddStoreResponse(BaseSchema):
     longitude: str
     open_time: time
     close_time: time
+
+class Store(BaseSchema):
+    store_id: uuid.UUID
+    name: str

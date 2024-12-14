@@ -17,7 +17,14 @@ async def add_store(db, organization_id, name, email, password, address, phone, 
     await db.refresh(db_obj)
     return db_obj
 
+
 async def get_stores_by_org_id(db, organization_id):
     stmt = select(models.Store).where(models.Store.organization_id == organization_id)
     stores = (await db.execute(stmt)).scalars().all()
     return stores
+
+
+async def get_store_by_store_id(db, store_id):
+    stmt = select(models.Store).where(models.Store.store_id == store_id)
+    store = (await db.execute(stmt)).scalars().first()
+    return store

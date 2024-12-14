@@ -4,16 +4,17 @@ from typing import List
 from database import get_async_db
 
 from models import org as models_org
-from crud import org
+from models import item as models_item
+from crud import org, item
+import uuid
 
 from lib.auth import organization_login, get_current_organization, organization_logout
 
 router = APIRouter()
 
 
-# テンプレートのため要確認
 @router.post("/add_org")
-async def add_org(add_org_request: models_org.AddOrgRequest, db = Depends(get_async_db)) -> models_org.AddOrgResponse:
+async def add_org(add_org_request: models_org.OrgRequest, db = Depends(get_async_db)) -> models_org.OrgResponse:
     name = add_org_request.name
     email = add_org_request.email
     password = add_org_request.password
@@ -27,7 +28,7 @@ async def login_org(_ =  Depends(organization_login)):
 
 
 @router.post("/add_store")
-async def add_store(add_store_request: models_org.AddStoreRequest, db = Depends(get_async_db), current_org = Depends(get_current_organization)) -> models_org.AddStoreResponse:
+async def add_store(add_store_request: models_org.StoreRequest, db = Depends(get_async_db), current_org = Depends(get_current_organization)) -> models_org.StoreResponse:
     name = add_store_request.name
     email = add_store_request.email
     password = add_store_request.password
@@ -40,15 +41,76 @@ async def add_store(add_store_request: models_org.AddStoreRequest, db = Depends(
     organization_id = current_org.organization_id
     return await org.add_store(db=db, organization_id=organization_id, name=name, email=email, password=password, address=address, phone=phone, latitude=latitude, longitude=longitude, open_time=open_time, close_time=close_time)
 
+
 @router.get("/me")
 async def me(current_org = Depends(get_current_organization)):
     return current_org
+
 
 @router.post("/logout")
 async def logout_org(_ = Depends(organization_logout)):
     return
 
-@router.get("/store-list")
-async def store_list(db = Depends(get_async_db), current_org = Depends(get_current_organization)) -> List[models_org.AddStoreResponse]:
+
+@router.get("/store_list")
+async def store_list(db = Depends(get_async_db), current_org = Depends(get_current_organization)) -> List[models_org.Store]:
     stores = await org.get_stores_by_org_id(db, current_org.organization_id)
-    return [models_org.AddStoreResponse.model_validate(store) for store in stores]
+    return stores
+
+
+@router.get("/store/{store_id}")
+async def store(store_id: uuid.UUID, db = Depends(get_async_db), _ = Depends(get_current_organization)) -> models_org.StoreResponse:
+    store = await org.get_store_by_store_id(db, store_id)
+    return store
+
+
+@router.post("/delete_org")
+async def delete_org(db = Depends(get_async_db), current_org = Depends(get_current_organization)):
+    pass
+
+
+@router.post("/delete_store/{store_id}")
+async def delete_store(store_id: uuid.UUID, db = Depends(get_async_db), current_org = Depends(get_current_organization)):
+    pass
+
+
+@router.post("/edit_org_profile")
+async def edit_org_profile(db = Depends(get_async_db), current_org = Depends(get_current_organization)):
+    pass
+
+
+@router.post("/edit_store_profile/{store_id}")
+async def edit_store_profile(store_id: uuid.UUID ,db = Depends(get_async_db), current_org = Depends(get_current_organization)):
+    pass
+
+
+@router.post("/add_item")
+async def add_item(itemRequest: models_item.ItemRequest, db = Depends(get_async_db), current_org = Depends(get_current_organization)) -> models_item.ItemResponse:
+    name = itemRequest.name
+    size = itemRequest.size
+    price = itemRequest.price
+    description = itemRequest.description
+    allergy_list = itemRequest.allergy
+    organization_id = current_org.organization_id
+    obj = await item.add_item(db, name, size, price, description, allergy_list, organization_id)
+    return obj
+
+
+@router.post("/edit_item/{item_id}")
+async def edit_item(itemRequest: models_item.ItemRequest, item_id: uuid.UUID, db = Depends(get_async_db), current_org = Depends(get_current_organization)) -> models_item.ItemResponse:
+    pass
+
+
+@router.post("/delete_item/{item_id}")
+async def delete_item(item_id: uuid.UUID, db = Depends(get_async_db), current_org = Depends(get_current_organization)):
+    pass
+
+
+@router.get("/get_items")
+async def get_items(db = Depends(get_async_db), current_org = Depends(get_current_organization)) -> List[models_item.Item]:
+    return await item.get_items(db, current_org.organization_id)
+
+
+@router.get("/get_item/{item_id}")
+async def get_item(item_id: uuid.UUID, db = Depends(get_async_db), current_org = Depends(get_current_organization)) -> models_item.ItemResponse:
+    return await item.get_item(db, item_id, current_org.organization_id)
