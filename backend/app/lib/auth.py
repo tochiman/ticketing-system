@@ -52,17 +52,17 @@ class Store(BaseModel):
 
 async def get_user_by_email(db, email, user_type):
     if user_type == 1:
-        stmt = select(models.Customer).where(models.Customer.email == email)
+        stmt = select(models.Customer).where(models.Customer.email == email, models.Customer.disabled == False)
         user = (await db.execute(stmt)).scalars().first()
-        return (user.customer_id, user.password)
+        return (user.customer_id, user.password) if user else None
     elif user_type == 2:
-        stmt = select(models.Organization).where(models.Organization.email == email)
+        stmt = select(models.Organization).where(models.Organization.email == email, models.Organization.disabled == False)
         user = (await db.execute(stmt)).scalars().first()
-        return (user.organization_id, user.password)
+        return (user.organization_id, user.password) if user else None
     elif user_type == 3:
-        stmt = select(models.Store).where(models.Store.email == email)
+        stmt = select(models.Store).where(models.Store.email == email, models.Store.disabled == False)
         user = (await db.execute(stmt)).scalars().first()
-        return (user.store_id, user.password)
+        return (user.store_id, user.password) if user else None
     return None
 
 
@@ -126,21 +126,21 @@ async def delete_session(db, session_id, user_type):
     return
 
 
-async def set_reset_password(db, email, expire, token):
-    obj = await get_reset_password_by_email(db, email)
+async def set_reset_password(db, email, expire, token, user_type):
+    obj = await get_reset_password_by_email(db, email, user_type)
     if obj:
         obj.token = token
         obj.expire = expire
     else:
-        obj = models.ResetPassword(email=email, token=token, expire=expire)
+        obj = models.ResetPassword(email=email, token=token, expire=expire, user_type=user_type)
         db.add(obj)
     await db.flush()
     await db.refresh(obj)
     return obj
 
 
-async def get_reset_password_by_email(db, email):
-    stmt = select(models.ResetPassword).where(models.ResetPassword.email == email)
+async def get_reset_password_by_email(db, email, user_type):
+    stmt = select(models.ResetPassword).where(models.ResetPassword.email == email, models.ResetPassword.user_type==user_type)
     obj = (await db.execute(stmt)).scalars().first()
     return obj
 
@@ -164,14 +164,14 @@ async def delete_expired_records(db):
     return
 
 
-async def create_password_reset_token(db, email):
+async def create_password_reset_token(db, email, user_type):
     expire = datetime.utcnow() + timedelta(minutes=RESET_TOKEN_EXPIRE_MINUTES)
     token_data = {
         "exp": expire,
         "sub": email,
     }
     hashed = pwd_context.hash(str(token_data))
-    await set_reset_password(db, email, expire, hashed)
+    await set_reset_password(db, email, expire, hashed, user_type)
     return hashed
 
 
@@ -202,14 +202,14 @@ def send_reset_email(email: str, reset_token: str, user_type):
 
 async def update_password(db, email, password, user_type):
     if user_type == 1:
-        stmt = select(models.Customer).where(models.Customer.email == email)
+        stmt = select(models.Customer).where(models.Customer.email == email, models.Customer.disabled == False)
         user = (await db.execute(stmt)).scalars().first()
         user.password = password
         await db.flush()
         await db.refresh(user)
         return user
     elif user_type == 2:
-        stmt = select(models.Organization).where(models.Organization.email == email)
+        stmt = select(models.Organization).where(models.Organization.email == email, models.Organization.disabled == False)
         user = (await db.execute(stmt)).scalars().first()
         user.password = password
         await db.flush()
@@ -310,7 +310,7 @@ class ForgetPassword:
         email = fpr.email
         user = await get_user_by_email(db, email, self.user_type)
         if user:
-            reset_token = await create_password_reset_token(db, email)
+            reset_token = await create_password_reset_token(db, email, self.user_type)
             url_safe_reset_token = base64.urlsafe_b64encode(reset_token.encode()).decode('utf-8').replace('=', '')
             background_tasks.add_task(send_reset_email, email, url_safe_reset_token, self.user_type)
         return

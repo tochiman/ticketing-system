@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Time, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, DateTime, Time, ForeignKey, Table, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType, PasswordType, EmailType
 import uuid
@@ -32,9 +32,10 @@ class Organization(Base):
 
     organization_id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     name = Column(String(256), nullable=False)
-    email = Column(EmailType, nullable=False, unique=True)
+    email = Column(EmailType, nullable=False)
     phone = Column(String(11), nullable=False)
     password = Column(PasswordType(schemes=["pbkdf2_sha512", "md5_crypt"], deprecated=["md5_crypt"]), nullable=False)
+    disabled = Column(Boolean, nullable=False)
 
     stores = relationship("Store", back_populates="organization")
     items = relationship("Item", back_populates="organization")
@@ -46,7 +47,7 @@ class Store(Base):
     store_id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     organization_id = Column(UUIDType(binary=False), ForeignKey("organization.organization_id"), nullable=False)
     name = Column(String(256), nullable=False)
-    email = Column(EmailType, nullable=False, unique=True)
+    email = Column(EmailType, nullable=False)
     password = Column(PasswordType(schemes=["pbkdf2_sha512", "md5_crypt"], deprecated=["md5_crypt"]), nullable=False)
     phone = Column(String(11), nullable=False)
     address = Column(String(256), nullable=False)
@@ -54,6 +55,7 @@ class Store(Base):
     longitude = Column(String(11), nullable=False)
     open_time = Column(Time, nullable=False)
     close_time = Column(Time, nullable=False)
+    disabled = Column(Boolean, nullable=False)
 
     organization = relationship("Organization", back_populates="stores")
     items = relationship("Item", secondary=available, back_populates="store")
@@ -80,9 +82,10 @@ class Customer(Base):
 
     customer_id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     name = Column(String(256), nullable=False)
-    email = Column(EmailType, nullable=False, unique=True)
+    email = Column(EmailType, nullable=False)
     password = Column(PasswordType(schemes=["pbkdf2_sha512", "md5_crypt"], deprecated=["md5_crypt"]), nullable=False)
     points = Column(Integer, nullable=False)
+    disabled = Column(Boolean, nullable=False)
 
     orders = relationship("Order", back_populates="customer")
     point_history = relationship("PointHistory", back_populates="customer")
@@ -162,3 +165,4 @@ class ResetPassword(Base):
     email = Column(EmailType, nullable=False, unique=True)
     token = Column(String(1137), nullable=False)
     expire = Column(DateTime, nullable=False)
+    user_type = Column(Integer, nullable=False) # 1: customer 2: org 3: store
