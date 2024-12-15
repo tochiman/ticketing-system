@@ -175,13 +175,11 @@ async def create_password_reset_token(db, email, user_type):
     return hashed
 
 
-def get_user_type(user_type):
+def get_url(user_type):
     if user_type == 1:
         return "customer"
     elif user_type == 2:
-        return "org"
-    elif user_type == 3:
-        return "store"
+        return "shop"
     return None
 
 def send_reset_email(email: str, reset_token: str, user_type):
@@ -189,7 +187,7 @@ def send_reset_email(email: str, reset_token: str, user_type):
     message["From"] = GMAIL_ADDRESS
     message["To"] = email
     message["Subject"] = "パスワードリセットのご案内"
-    reset_url = f"{HOST}/{get_user_type(user_type)}/reset-password?token={reset_token}".replace("//", "/")
+    reset_url = f"{HOST}/{get_url(user_type)}/reset-password?token={reset_token}".replace("//", "/")
     with open('lib/email.html', 'r', encoding="utf-8") as f:
         html = f.read().replace("{{reset_url}}", reset_url)
     message.attach(MIMEText(html, "html"))
