@@ -8,7 +8,7 @@ from models import item as models_item
 from crud import org, item
 import uuid
 
-from lib.auth import organization_login, get_current_organization, organization_logout
+from lib.auth import organization_login, get_current_organization, organization_logout, organization_froget_password, organization_reset_password
 
 router = APIRouter(tags=["org"])
 
@@ -114,3 +114,11 @@ async def get_items(db = Depends(get_async_db), current_org = Depends(get_curren
 @router.get("/get_item/{item_id}", tags=["org-item"])
 async def get_item(item_id: uuid.UUID, db = Depends(get_async_db), current_org = Depends(get_current_organization)) -> models_item.ItemResponse:
     return await item.get_item(db, item_id, current_org.organization_id)
+
+@router.post("/forget_password", tags=["org-org"])
+async def forget_password(_ = Depends(organization_froget_password)):
+    return
+
+@router.post("/reset_password", tags=["org-org"])
+async def reset_password(_ = Depends(organization_reset_password)):
+    return

@@ -153,3 +153,12 @@ class Session(Base):
     session_id = Column(String(128), primary_key=True)
     user_id = Column(UUIDType(binary=False), nullable=False)
     user_type = Column(Integer, nullable=False) # 1: customer 2: org 3: store
+
+
+class ResetPassword(Base):
+    __tablename__ = "reset_password"
+
+    reset_password_id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
+    email = Column(EmailType, nullable=False, unique=True)
+    token = Column(String(1137), nullable=False)
+    expire = Column(DateTime, nullable=False)
