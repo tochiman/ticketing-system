@@ -1,6 +1,7 @@
 <script>
   import { goto } from '$app/navigation';
   import { Button, Input, Label } from 'flowbite-svelte';
+  import { org } from '../store';
   
   let email = '';
   let password = '';
@@ -17,6 +18,14 @@
         body: JSON.stringify({ email, password }),
       });
   
+      // if (response.ok) {
+      //   // /api/org/login が成功した場合
+      //   org.set(false); // org を true に設定
+      //   console.log(org.set)
+      //   goto("/shop/control");
+      //   return;
+      // }
+
       if (response.status === 401) {
         const response2 = await fetch('/api/store/login', {
           method: 'POST',
@@ -25,26 +34,26 @@
           },
           body: JSON.stringify({ email, password }),
         });
-  
+      
         if (response2.status === 401) {
           errorMessage = 'ログインに失敗しました。メールアドレスとパスワードを確認してください。';
           return;
         } else if (!response2.ok) {
           throw new Error('Store login failed');
         }
-      } else if (!response.ok) {
+        goto("/shop/control");
+      } else {
         throw new Error('Org login failed');
       }
-      goto("/shop/control");
     } catch (error) {
       if (error instanceof Error) {
-        errorMessage = `ログインに失敗しました。メールアドレスとパスワードを確認してください。: ${error.message}`;
+        errorMessage = `ログインに失敗しました。メールアドレスとパスワードを確認してください。1: ${error.message}`;
       } else {
-        errorMessage = `ログインに失敗しました。メールアドレスとパスワードを確認してください。: ${String(error)}`;
+        errorMessage = `ログインに失敗しました。メールアドレスとパスワードを確認してください。2: ${String(error)}`;
       }
     }
   }
-  </script>
+</script>
   
   <section class="bg-white dark:bg-gray-900 h-screen">
     <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-full lg:py-0">
