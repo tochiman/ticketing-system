@@ -7,6 +7,8 @@ from crud import customer
 
 from lib.auth import customer_login, customer_logout, get_current_customer
 
+import logging #login情報のための追加(デバック用)
+
 router = APIRouter()
 
 # テンプレートのため要確認
@@ -35,7 +37,20 @@ async def login_customer(_ =  Depends(customer_login)):
 async def logout_customer(_ = Depends(customer_logout)):
     return
 
+@router.post("/delete_customer")
+async def delete_customer(db = Depends(get_async_db), current_customer = Depends(get_current_customer)):
+    import logging
+    logger = logging.getLogger("delete_customer")
+    logger.warning(f"Current customer: {current_customer}")  # ログにcurrent_customerを出力
+
+    id = current_customer.id
+    return await customer.delete_customer(id, db)
+
+
+
 # ログイン済みのユーザのみアクセス可能
 @router.post("/me")
 async def me(current_customer = Depends(get_current_customer)):
     return current_customer
+
+
