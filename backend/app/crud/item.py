@@ -1,4 +1,4 @@
-from sqlalchemy.sql import select
+from sqlalchemy.sql import select, delete
 from sqlalchemy.orm import joinedload
 
 from crud import models
@@ -26,7 +26,25 @@ async def get_items(db, organization_id):
     return item
 
 
-async def get_item(db, item_id, organization_id):
-    stmt = select(models.Item).where(models.Item.item_id == item_id, models.Item.organization_id == organization_id).options(joinedload(models.Item.allergy))
+async def get_item(db, item_id):
+    stmt = select(models.Item).where(models.Item.item_id == item_id).options(joinedload(models.Item.allergy))
     item = (await db.execute(stmt)).scalars().unique().first()
     return item
+
+
+async def change_available(db, store_id, item_id):
+    stmt = select(models.Available).where(models.Available.store_id == store_id, models.Available.item_id == item_id)
+    available = (await db.execute(stmt)).scalars().first()
+    if available:
+        stmt = delete(models.Available).where(models.Available.store_id == store_id, models.Available.item_id == item_id)
+        await db.execute(stmt)
+    else:
+        available = models.Available(store_id=store_id, item_id=item_id)
+        db.add(available)
+        await db.flush()
+        await db.refresh(available)
+
+async def get_available(db, store_id):
+    stmt = select(models.Available).where(models.Available.store_id == store_id)
+    available = (await db.execute(stmt)).scalars().all()
+    return available
