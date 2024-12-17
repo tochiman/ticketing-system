@@ -44,3 +44,9 @@ async def get_store_by_store_id(db, store_id):
     stmt = select(models.Store).where(models.Store.store_id == store_id, models.Store.disabled == False)
     store = (await db.execute(stmt)).scalars().first()
     return store
+
+
+async def get_stores(db):
+    stmt = select(models.Store).where(models.Store.disabled == False)
+    stores = (await db.execute(stmt)).scalars().all()
+    return stores

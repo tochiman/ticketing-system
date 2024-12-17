@@ -3,14 +3,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType, PasswordType, EmailType
 import uuid
 from database import Base
+from datetime import datetime
 
-
-available = Table(
-    "available",
-    Base.metadata,
-    Column("store_id", UUIDType(binary=False), ForeignKey("store.store_id"), primary_key=True),
-    Column("item_id", UUIDType(binary=False), ForeignKey("item.item_id"), primary_key=True),
-)
 
 class Available(Base):
     __tablename__ = "available"
@@ -135,7 +129,7 @@ class Payment(Base):
     order_id = Column(UUIDType(binary=False), ForeignKey("order.order_id"), nullable=False)
     total = Column(Integer, nullable=False)
     status = Column(Integer, nullable=False) # todo
-    timestamp = Column(DateTime, nullable=False)
+    timestamp = Column(DateTime, default=datetime.now(), nullable=False)
 
     order = relationship("Order", back_populates="payment", uselist=False)
 
