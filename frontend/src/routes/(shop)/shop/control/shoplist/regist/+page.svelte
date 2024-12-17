@@ -17,11 +17,10 @@
     password: string;
     address: string;
     phone: string;
-    latitude: number;
-    longitude: number;
-    open_time: string;
-    close_time: string;
-    // organization_id: string;
+    latitude: string;
+    longitude: string;
+    openTime: string;
+    closeTime: string;
   }
 
   async function handleSubmit(): Promise<void> {
@@ -41,16 +40,15 @@
       const formattedPhone: string = phone.replace(/-/g, '');
 
       const storeData: StoreData = {
-        name,
-        email,
-        password,
-        address,
+        name: name,
+        email: email,
+        password: password,
+        address: address,
         phone: formattedPhone,
-        latitude: coordinates.latitude,
-        longitude: coordinates.longitude,
-        open_time: openTime,
-        close_time: closeTime,
-        // organization_id: "a"
+        latitude: coordinates.latitude.toString(),
+        longitude: coordinates.longitude.toString() ,
+        openTime: openTime,
+        closeTime: closeTime,
       };
 
       // バックエンドAPIにデータを送信
@@ -62,9 +60,9 @@
         },
         body: JSON.stringify(storeData),
       });
-      console.log('レスポンスステータス:', response.status);
-console.log('レスポンスヘッダー:', response.headers);
-
+      if (response.status == 422) {
+        console.log(response.json())
+      }
       if (response.ok) {
         alert('店舗情報が正常に登録されました。');
         goto('/shop/control/shoplist');

@@ -1,7 +1,6 @@
 <script>
   import { goto } from '$app/navigation';
   import { Button, Input, Label } from 'flowbite-svelte';
-  import { org } from '../store';
   
   let email = '';
   let password = '';
@@ -18,13 +17,10 @@
         body: JSON.stringify({ email, password }),
       });
   
-      // if (response.ok) {
-      //   // /api/org/login が成功した場合
-      //   org.set(false); // org を true に設定
-      //   console.log(org.set)
-      //   goto("/shop/control");
-      //   return;
-      // }
+      if (response.ok) {
+        goto("/shop/control");
+        return;
+      }
 
       if (response.status === 401) {
         const response2 = await fetch('/api/store/login', {

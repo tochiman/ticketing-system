@@ -4,36 +4,34 @@
     import { onMount } from 'svelte';
     import { checkSession } from '../../../../lib/index';
     import { goto } from '$app/navigation';
-    import { Button } from 'flowbite-svelte';
-    import { org } from '../store';
-    import { control } from '../store';
+    import { org, store } from '../store';
     import { get } from 'svelte/store';
     import { page } from '$app/stores';
 
 
-
     let { children } = $props();
 
-    // loginしているかのアクセス制限
+    //loginしているかのアクセス制限
+    onMount(async () => {
+        const isValid = await checkSession();
+        if (!isValid) {
+        goto('/shop/login');
+        }
+    });  
+    
+
+    // orgかどうかでのアクセス制限
     // onMount(async () => {
-    //     const isValid = await checkSession();
-    //     if (!isValid) {
-    //     goto('/shop/login');
+    //     const currentPath = get(page).url.pathname;
+    //     // org が false の場合、特定のパスへのアクセスを制限
+    //     if (!get(org)) {
+    //         if (currentPath.startsWith('/shop/control/shoplist') || 
+    //             currentPath.startsWith('/shop/control/org-edit')) {
+    //             goto('/shop/control');
+    //         }
     //     }
     // });  
-    
-    // orgかどうかでのアクセス制限
-    // const currentPath = get(page).url.pathname;
-    // if (currentPath.startsWith('/shop/control/shoplist')) {
-    //     if (!org) {
-    //         goto('/shop/control');
-    //     }
-    // }
-    // if (currentPath.startsWith('/shop/control/org-edit')) {
-    //     if (!org) {
-    //         goto('/shop/control');
-    //     }
-    // }
+
 
     // Function to handle logout
     async function handleLogout() {
@@ -47,6 +45,8 @@
 
             if (response.ok) {
                 // Navigate to the shop page after successful logout
+                org.set(false);
+                store.set(false);
                 goto('/shop');
             } else {
                 console.error('Logout failed:', response.statusText);
@@ -57,6 +57,8 @@
             // Optionally handle errors here (e.g., show a notification)
         }
     }
+
+    
 </script>
 
 <div class="relative">
