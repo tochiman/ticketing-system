@@ -5,13 +5,6 @@ import uuid
 from database import Base
 
 
-available = Table(
-    "available",
-    Base.metadata,
-    Column("store_id", UUIDType(binary=False), ForeignKey("store.store_id"), primary_key=True),
-    Column("item_id", UUIDType(binary=False), ForeignKey("item.item_id"), primary_key=True),
-)
-
 class Available(Base):
     __tablename__ = "available"
 
