@@ -12,6 +12,17 @@ available = Table(
     Column("item_id", UUIDType(binary=False), ForeignKey("item.item_id"), primary_key=True),
 )
 
+class Available(Base):
+    __tablename__ = "available"
+
+    available_id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
+    store_id = Column(UUIDType(binary=False), ForeignKey("store.store_id"), nullable=False)
+    item_id = Column(UUIDType(binary=False), ForeignKey("item.item_id"), nullable=False)
+
+    item = relationship("Item", back_populates="available")
+    store = relationship("Store", back_populates="available")
+
+
 item_to_allergy = Table(
     "item_to_allergy",
     Base.metadata,
@@ -58,7 +69,7 @@ class Store(Base):
     disabled = Column(Boolean, nullable=False)
 
     organization = relationship("Organization", back_populates="stores")
-    items = relationship("Item", secondary=available, back_populates="store")
+    available = relationship("Available", back_populates="store")
 
 
 class Item(Base):
@@ -73,8 +84,8 @@ class Item(Base):
 
     organization = relationship("Organization", back_populates="items")
     order_details = relationship("OrderDetail", back_populates="item")
-    store = relationship("Store", secondary=available, back_populates="items")
     allergy = relationship("Allergy", secondary=item_to_allergy, back_populates="item")
+    available = relationship("Available", back_populates="item")
 
 
 class Customer(Base):
