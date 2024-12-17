@@ -2,7 +2,7 @@ import secrets
 from datetime import datetime, timedelta, timezone, date
 
 from fastapi import Depends, HTTPException, Response, status
-from sqlalchemy.sql import select, delete
+from sqlalchemy.sql import select
 from passlib.context import CryptContext
 from pydantic import BaseModel, EmailStr
 from uuid import UUID
@@ -10,9 +10,6 @@ from uuid import UUID
 from database import get_async_db
 
 from crud import models
-
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 # access_tokenの有効期限
-SESSION_ID_LENGTH = 64 # セッションIDの長さ
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

@@ -1,11 +1,9 @@
-from datetime import datetime
-
-from pydantic import Field, EmailStr
-
+from typing import List, Dict
 from models.base import BaseSchema
 
 class AddOrderRequest(BaseSchema):
-    customerId: str
+    storeId: str
+    itemList: List[Dict['id': str, 'numberOfPurchase': int]]
 
 class AddOrderResponce(BaseSchema):
     None

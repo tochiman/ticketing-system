@@ -1,8 +1,10 @@
+from http.client import HTTPException
 from crud import models
 from sqlalchemy.sql import select
 from lib import auth
 
 async def add_customer(db, name, email, password, points):
+    await exist_email(db, email)
     db_obj = models.Customer(name=name, email=email, password=password, points=points)
     db.add(db_obj)
     await db.flush()
@@ -27,3 +29,13 @@ async def delete_customer(id,db):
     await db.delete(db_obj)
     await db.flush()
     return db_obj
+
+async def exist_email(db, email):
+    stmt = select(models.Customer).where(models.Customer.email == email, models.Customer.disabled == False)
+    customer = (await db.execute(stmt)).scalars().first()
+    if customer:
+        raise HTTPException(
+            status_code=400,
+            detail="This email address is already in use."
+        )
+    return
