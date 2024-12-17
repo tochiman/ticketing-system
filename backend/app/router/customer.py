@@ -12,7 +12,6 @@ import logging #login情報のための追加(デバック用)
 
 router = APIRouter(tags=["customer"])
 
-# テンプレートのため要確認
 @router.post("/add_customer")
 async def add_customer(add_customer_request: models_customer.AddCustomerRequest, db = Depends(get_async_db)) -> models_customer.AddCustomerResponse:
     name = add_customer_request.name
