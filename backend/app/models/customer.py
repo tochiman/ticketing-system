@@ -18,7 +18,6 @@ class EditCustomerRequest(BaseSchema):
     name: str = Field(..., max_items=256)
     email: EmailStr
     password: str
-    points: int
     
 class EditCustomerResponse(BaseSchema):
     name: str
