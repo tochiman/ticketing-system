@@ -54,7 +54,7 @@
       <div class="space-y-2">
         <Label for="password" class="text-sm font-medium text-gray-700">パスワード</Label>
         <div class="relative">
-          <Input id="password" type="password" class="w-full pr-10" bind:value={shopData.password}/>
+          <Input id="password" type="password" class="w-full pr-10" />
           <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" on:click={() => clearField('password')}>
             ✕
           </button>

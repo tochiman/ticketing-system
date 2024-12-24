@@ -75,7 +75,7 @@
         <Button type="submit" class="w-full">ログイン</Button>
         
         <div class="text-center">
-          <a href="/shop/login/forget-pw" class="text-sm text-blue-600 hover:underline dark:text-blue-500">
+          <a href="/shop/login/foget-pw" class="text-sm text-blue-600 hover:underline dark:text-blue-500">
             パスワードをお忘れの方
           </a>
         </div>
