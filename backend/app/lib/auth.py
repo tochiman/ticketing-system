@@ -28,7 +28,6 @@ class Customer(BaseModel):
     customer_id: UUID
     name: str
     email: EmailStr
-    date_of_birth: date
     points: int
 
 
