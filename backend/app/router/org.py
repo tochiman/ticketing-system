@@ -112,8 +112,8 @@ async def get_items(db = Depends(get_async_db), current_org = Depends(get_curren
 
 
 @router.get("/get_item/{item_id}", tags=["org-item"])
-async def get_item(item_id: uuid.UUID, db = Depends(get_async_db), current_org = Depends(get_current_organization)) -> models_item.ItemResponse:
-    return await item.get_item(db, item_id, current_org.organization_id)
+async def get_item(item_id: uuid.UUID, db = Depends(get_async_db), _ = Depends(get_current_organization)) -> models_item.ItemResponse:
+    return await item.get_item(db, item_id)
 
 @router.post("/forget_password", tags=["org-org"])
 async def forget_password(_ = Depends(organization_froget_password)):

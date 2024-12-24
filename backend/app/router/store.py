@@ -32,5 +32,5 @@ async def get_items(db = Depends(get_async_db), current_store = Depends(get_curr
 
 
 @router.get("/get_item/{item_id}")
-async def get_item(item_id: uuid.UUID, db = Depends(get_async_db), current_store = Depends(get_current_store)) -> models_item.ItemResponse:
-    return await item.get_item(db, item_id, current_store.organization_id)
+async def get_item(item_id: uuid.UUID, db = Depends(get_async_db), _= Depends(get_current_store)) -> models_item.ItemResponse:
+    return await item.get_item(db, item_id)

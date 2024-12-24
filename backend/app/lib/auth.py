@@ -28,14 +28,15 @@ class Customer(BaseModel):
     customer_id: UUID
     name: str
     email: EmailStr
-    date_of_birth: date
     points: int
+    phone: str
 
 
 class Organization(BaseModel):
     organization_id: UUID
     name: str
     email: EmailStr
+    phone: str
 
 
 class Store(BaseModel):
@@ -48,6 +49,7 @@ class Store(BaseModel):
     longitude: str
     open_time: datetime
     close_time: datetime
+    phone: str
 
 
 async def get_user_by_email(db, email, user_type):
@@ -179,7 +181,7 @@ def get_url(user_type):
     if user_type == 1:
         return "customer"
     elif user_type == 2:
-        return "shop"
+        return "shop/login/foget-pw"
     return None
 
 def send_reset_email(email: str, reset_token: str, user_type):
@@ -187,7 +189,7 @@ def send_reset_email(email: str, reset_token: str, user_type):
     message["From"] = GMAIL_ADDRESS
     message["To"] = email
     message["Subject"] = "パスワードリセットのご案内"
-    reset_url = f"{HOST}/{get_url(user_type)}/reset-password?token={reset_token}".replace("//", "/")
+    reset_url = f"{HOST}/{get_url(user_type)}?token={reset_token}".replace("//", "/")
     with open('lib/email.html', 'r', encoding="utf-8") as f:
         html = f.read().replace("{{reset_url}}", reset_url)
     message.attach(MIMEText(html, "html"))
