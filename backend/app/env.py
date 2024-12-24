@@ -14,4 +14,4 @@ HOST = os.environ.get("HOST")
 GMAIL_ADDRESS = os.environ.get("GMAIL_ADDRESS")
 GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD")
 
-SALT = os.environ.get("SALT")
+SALT = os.urandom(32)

@@ -1,5 +1,11 @@
 from fastapi import APIRouter, Depends # type: ignore
 
+import hashlib
+from env import SALT
+import io
+from starlette.responses import StreamingResponse
+import qrcode
+
 from database import get_async_db
 
 from models import customer as models_customer
@@ -102,9 +108,29 @@ async def add_order(add_order_request: models_order.AddOrderRequest, db = Depend
     name = current_customer.name
     email = current_customer.email
     password = current_customer.password
-    points = current_customer.points
-    current_points = points - total
-    return await customer.edit_customer(id,db,name,email,password,current_points)
+    points = current_customer.points - total
+    return await customer.edit_customer(id,db,name,email,password,points)
+
+""" point増加(定数) """
+@router.post("/add_100p")
+async def add_100p(db= Depends(get_async_db),current_customer = Depends(get_current_customer)):
+    id = current_customer.customer_id
+    name = current_customer.name
+    email = current_customer.email
+    password = current_customer.password
+    points = current_customer.points + 100
+    return await customer.edit_customer(id,db,name,email,password,points)
+
+""" point増加(可変) """
+@router.post("/add_points")
+async def add_100p(point
+                   ,db= Depends(get_async_db),current_customer = Depends(get_current_customer)):
+    id = current_customer.customer_id
+    name = current_customer.name
+    email = current_customer.email
+    password = current_customer.password
+    points = current_customer.points + point
+    return await customer.edit_customer(id,db,name,email,password,points)
 
 """ storeレコード全取得 """
 @router.get("/get_all_store")
@@ -116,7 +142,14 @@ async def get_all_store(db = Depends(get_async_db)):
 async def get_items(store_id, db = Depends(get_async_db)):
     return await item.get_available(db,store_id)
 
-"""
-商品のアレルギー取得
-・
-"""
+
+""" QRコード生成時の文字列取得 """
+@router.get("/get_qr/{order_id}")
+async def get_qr(order_id):
+    sha_256 = hashlib.pbkdf2_hmac('sha256', order_id.encode(), SALT, 10000).hex()
+    qr_src = str(order_id) + ':' + sha_256
+    img = qrcode.make(qr_src)
+    buf = io.BytesIO()
+    img.save(buf)
+    buf.seek(0)
+    return StreamingResponse(buf, media_type="image/png")
