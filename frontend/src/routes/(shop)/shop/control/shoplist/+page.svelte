@@ -5,7 +5,7 @@
   
   interface Store {
       name: string;
-      store_id: string;
+      storeId: string;
   }
 
   let stores: Store[] = [];
@@ -55,7 +55,7 @@
                   <Button 
                       color="light" 
                       class="w-full" 
-                      on:click={() => goto(`/shop/control/shoplist/edit/${store.store_id}`)}
+                      on:click={() => goto(`/shop/control/shoplist/edit/${store.storeId}`)}
                   >
                       店舗情報編集
                   </Button>
