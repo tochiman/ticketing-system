@@ -29,12 +29,14 @@ class Customer(BaseModel):
     name: str
     email: EmailStr
     points: int
+    phone: str
 
 
 class Organization(BaseModel):
     organization_id: UUID
     name: str
     email: EmailStr
+    phone: str
 
 
 class Store(BaseModel):
@@ -47,6 +49,7 @@ class Store(BaseModel):
     longitude: str
     open_time: datetime
     close_time: datetime
+    phone: str
 
 
 async def get_user_by_email(db, email, user_type):
