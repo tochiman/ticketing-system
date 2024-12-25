@@ -4,7 +4,7 @@ from sqlalchemy.orm import joinedload
 from crud import models
 
 async def add_item(db, name, size, price, description, allergy_list, organization_id):
-    item_obj = models.Item(name=name, size=size, price=price, description=description, organization_id=organization_id)
+    item_obj = models.Item(name=name, size=size, price=price, description=description, organization_id=organization_id, disabled=False)
     for id in allergy_list:
         allergy = await get_allergy(db, id)
         allergy.item.append(item_obj)
@@ -21,13 +21,13 @@ async def get_allergy(db, id):
 
 
 async def get_items(db, organization_id):
-    stmt = select(models.Item).where(models.Item.organization_id == organization_id)
+    stmt = select(models.Item).where(models.Item.organization_id == organization_id, models.Item.disabled == False)
     item = (await db.execute(stmt)).scalars().all()
     return item
 
 
 async def get_item(db, item_id):
-    stmt = select(models.Item).where(models.Item.item_id == item_id).options(joinedload(models.Item.allergy))
+    stmt = select(models.Item).where(models.Item.item_id == item_id, models.Item.disabled == False).options(joinedload(models.Item.allergy))
     item = (await db.execute(stmt)).scalars().unique().first()
     return item
 
@@ -48,3 +48,28 @@ async def get_available(db, store_id):
     stmt = select(models.Available).where(models.Available.store_id == store_id)
     available = (await db.execute(stmt)).scalars().all()
     return available
+
+
+async def edit_item(db, item_id, name, size, price, description, allergy_list):
+    stmt = select(models.Item).where(models.Item.item_id == item_id, models.Item.disabled == False)
+    item = (await db.execute(stmt)).scalars().unique().first()
+    item.name = name
+    item.size = size
+    item.price = price
+    item.description = description
+    for allergy in item.allergy:
+        allergy.item.remove(item)
+    for id in allergy_list:
+        allergy = await get_allergy(db, id)
+        allergy.item.append(item)
+    await db.flush()
+    await db.refresh(item, ["allergy"])
+    return item
+
+
+async def delete_item(db, item_id):
+    stmt = select(models.Item).where(models.Item.item_id == item_id, models.Item.disabled == False)
+    item = (await db.execute(stmt)).scalars().unique().first()
+    item.disabled = True
+    await db.flush()
+    return

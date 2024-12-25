@@ -74,6 +74,7 @@ class Item(Base):
     size = Column(String(256), nullable=True)
     price = Column(Integer, nullable=False)
     description = Column(String(256), nullable=True)
+    disabled = Column(Boolean, nullable=False)
 
     organization = relationship("Organization", back_populates="items")
     order_details = relationship("OrderDetail", back_populates="item")
