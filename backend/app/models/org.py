@@ -20,6 +20,10 @@ class OrgEditRequest(BaseSchema):
     new_password: str
 
 
+class OrgDelete(BaseSchema):
+    password: str
+
+
 class OrgResponse(BaseSchema):
     name: str
     email: EmailStr

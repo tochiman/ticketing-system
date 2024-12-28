@@ -65,13 +65,17 @@ async def store(store_id: uuid.UUID, db = Depends(get_async_db), _ = Depends(get
 
 
 @router.post("/delete_org", tags=["org-store"])
-async def delete_org(db = Depends(get_async_db), current_org = Depends(get_current_organization)):
-    await org.delete_org(db, current_org.organization_id)
+async def delete_org(org_delete: models_org.OrgDelete, db = Depends(get_async_db), current_org = Depends(get_current_organization)):
+    if await org.veryfy_org(db, current_org.email, org_delete.password):
+        return await org.delete_org(db, current_org.organization_id)
+    raise HTTPException(status_code=401, detail="パスワードが異なります")
 
 
 @router.post("/delete_store/{store_id}", tags=["org-store"])
-async def delete_store(store_id: uuid.UUID, db = Depends(get_async_db), _ = Depends(get_current_organization)):
-    await org.delete_store_by_store_id(db, store_id)
+async def delete_store(store_id: uuid.UUID, db = Depends(get_async_db), current_org = Depends(get_current_organization)):
+    if org.veryfy_store(db, store_id, current_org.organization_id):
+        return await org.delete_store_by_store_id(db, store_id)
+    raise HTTPException(status_code=401, detail="指定の店舗はありません")
 
 
 @router.post("/edit_org_profile", tags=["org-org"])
@@ -82,22 +86,23 @@ async def edit_org_profile(edit_org_request:models_org.OrgEditRequest, db = Depe
         phone = edit_org_request.phone
         password = edit_org_request.new_password
         return await org.edit_org(db, current_org.organization_id, name, email, phone, password)
-    raise HTTPException(status_code=401, detail="passwordが異なります。")
-
+    raise HTTPException(status_code=401, detail="パスワードが異なります")
 
 
 @router.post("/edit_store_profile/{store_id}", tags=["org-store"])
 async def edit_store_profile(store_id: uuid.UUID, edit_store_request: models_org.StoreRequest, db = Depends(get_async_db), current_org = Depends(get_current_organization)) -> models_org.StoreResponse:
-    name = edit_store_request.name
-    email = edit_store_request.email
-    password = edit_store_request.password
-    address = edit_store_request.address
-    phone = edit_store_request.phone
-    latitude = edit_store_request.latitude
-    longitude = edit_store_request.longitude
-    open_time = edit_store_request.open_time
-    close_time = edit_store_request.close_time
-    return await org.edit_store(db, store_id, name, email, password, address, phone, latitude, longitude, open_time, close_time)
+    if org.veryfy_store(db, store_id, current_org.organization_id):
+        name = edit_store_request.name
+        email = edit_store_request.email
+        password = edit_store_request.password
+        address = edit_store_request.address
+        phone = edit_store_request.phone
+        latitude = edit_store_request.latitude
+        longitude = edit_store_request.longitude
+        open_time = edit_store_request.open_time
+        close_time = edit_store_request.close_time
+        return await org.edit_store(db, store_id, name, email, password, address, phone, latitude, longitude, open_time, close_time)
+    raise HTTPException(status_code=401, detail="指定の店舗はありません")
 
 
 @router.post("/add_item", tags=["org-item"])
@@ -113,17 +118,21 @@ async def add_item(itemRequest: models_item.ItemRequest, db = Depends(get_async_
 
 @router.post("/edit_item/{item_id}", tags=["org-item"])
 async def edit_item(itemRequest: models_item.ItemRequest, item_id: uuid.UUID, db = Depends(get_async_db), current_org = Depends(get_current_organization)) -> models_item.ItemResponse:
-    name = itemRequest.name
-    size = itemRequest.size
-    price = itemRequest.price
-    description = itemRequest.description
-    allergy_list = itemRequest.allergy
-    return await item.edit_item(db, item_id, name, size, price, description, allergy_list)
+    if await item.verify_item(db, item_id, current_org.organization_id):
+        name = itemRequest.name
+        size = itemRequest.size
+        price = itemRequest.price
+        description = itemRequest.description
+        allergy_list = itemRequest.allergy
+        return await item.edit_item(db, item_id, name, size, price, description, allergy_list)
+    raise HTTPException(status_code=401, detail="指定の商品はありません")
 
 
 @router.post("/delete_item/{item_id}", tags=["org-item"])
 async def delete_item(item_id: uuid.UUID, db = Depends(get_async_db), current_org = Depends(get_current_organization)):
-    return await item.delete_item(db, item_id)
+    if await item.verify_item(db, item_id, current_org.organization_id):
+        return await item.delete_item(db, item_id)
+    raise HTTPException(status_code=401, detail="指定の商品はありません")
 
 
 @router.get("/get_items", tags=["org-item"])
@@ -135,9 +144,11 @@ async def get_items(db = Depends(get_async_db), current_org = Depends(get_curren
 async def get_item(item_id: uuid.UUID, db = Depends(get_async_db), _ = Depends(get_current_organization)) -> models_item.ItemResponse:
     return await item.get_item(db, item_id)
 
+
 @router.post("/forget_password", tags=["org-org"])
 async def forget_password(_ = Depends(organization_froget_password)):
     return
+
 
 @router.post("/reset_password", tags=["org-org"])
 async def reset_password(_ = Depends(organization_reset_password)):

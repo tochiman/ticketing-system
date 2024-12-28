@@ -73,3 +73,11 @@ async def delete_item(db, item_id):
     item.disabled = True
     await db.flush()
     return
+
+
+async def verify_item(db, item_id, organization_id):
+    stmt = select(models.Item).where(models.Item.item_id == item_id, models.Item.organization_id == organization_id, models.Item.disabled == False)
+    item = (await db.execute(stmt)).scalars().unique().first()
+    if item:
+        return True
+    return False
