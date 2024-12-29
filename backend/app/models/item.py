@@ -27,3 +27,7 @@ class Item(BaseSchema):
 
 class ItemWithAvailability(Item):
     available: bool
+
+
+class ChangeAvailableRequest(BaseSchema):
+    item_id: str

@@ -57,6 +57,7 @@ class StoreResponse(BaseSchema):
     open_time: time
     close_time: time
 
+
 class Store(BaseSchema):
     store_id: uuid.UUID
     name: str

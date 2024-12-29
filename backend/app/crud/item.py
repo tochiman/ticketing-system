@@ -63,11 +63,13 @@ async def change_available(db, store_id, item_id):
     if available:
         stmt = delete(models.Available).where(models.Available.store_id == store_id, models.Available.item_id == item_id)
         await db.execute(stmt)
+        return False
     else:
         available = models.Available(store_id=store_id, item_id=item_id)
         db.add(available)
         await db.flush()
         await db.refresh(available)
+        return True
 
 
 async def get_available(db, store_id):
