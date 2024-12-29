@@ -1,5 +1,5 @@
 import secrets
-from datetime import datetime, timedelta, timezone, date
+from datetime import datetime, timedelta, timezone, time
 
 import smtplib
 from email.mime.text import MIMEText
@@ -47,8 +47,8 @@ class Store(BaseModel):
     address: str
     latitude: str
     longitude: str
-    open_time: datetime
-    close_time: datetime
+    open_time: time
+    close_time: time
     phone: str
 
 
@@ -80,7 +80,7 @@ async def get_user_by_id(db, id, user_type):
     elif user_type == 3:
         stmt = select(models.Store).where(models.Store.store_id == id)
         user = (await db.execute(stmt)).scalars().first()
-        return Organization.model_validate(user, from_attributes=True)
+        return Store.model_validate(user, from_attributes=True)
     return None
 
 
