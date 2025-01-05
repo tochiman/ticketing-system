@@ -4,6 +4,7 @@ from models import Order, OrderDetail, Item, Store
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 from crud import models
+from sqlalchemy.ext.asyncio import AsyncSession
 
 async def get_order_list(db, store_id):
     query = (

@@ -7,6 +7,7 @@ from models import item as models_item
 from crud import store, item
 from lib.auth import store_login, get_current_store
 from crud.store import status, update_status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(tags=["store"])
 
