@@ -38,9 +38,9 @@ async def logout_customer(_ = Depends(customer_logout)):
     return
 
 """ customerのpoints取得 """
-@router.get("/get_isServed")
-async def get_isServed(db = Depends(get_async_db), current_customer = Depends(get_current_customer)):
-    pass
+@router.post("/get_isServed")
+async def get_isServed(current_customer = Depends(get_current_customer)):
+    return current_customer.points
 
 """ ログイン中ユーザのユーザデータ取得 """
 @router.get("/me")
@@ -67,20 +67,23 @@ async def delete_customer(db = Depends(get_async_db), current_customer = Depends
     return await customer.delete_customer(id, db)
 
 """ customer_to_allergyレコード追加 """
-@router.post("/add_allergy")
-async def add_allergy(db = Depends(get_async_db), current_customer = Depends(get_current_customer)):
-    pass
+@router.post("/edit_allergy")
+async def edit_allergy(add_allergy_request:models_customer.AddAllergyRequest, db = Depends(get_async_db), current_customer = Depends(get_current_customer)):
+    customer_id = current_customer.customer_id
+    allergy_list = add_allergy_request.allergies
+    return await customer.edit_allergy(db, customer_id, allergy_list)
 
 """
 注文履歴の取得
 ・orderレコード取得
 ・order_idからpaymentデータ取得
 ・order_idからorder_detailデータ取得
-(order_detailのitem_idフィールドからitemデータ取得)
 """
 @router.get("/get_order")
 async def get_order(db = Depends(get_async_db), current_cutomer = Depends(get_current_customer)):
-    pass
+    customer_id = current_cutomer.customer_id
+    orders = await customer.get_orders_by_store(db, customer_id)
+    return models_customer.OrderListResponse(orders=orders)
 
 """ 
 オーダー
@@ -123,8 +126,7 @@ async def add_100p(db= Depends(get_async_db),current_customer = Depends(get_curr
 
 """ point増加(可変) """
 @router.post("/add_points")
-async def add_100p(point
-                   ,db= Depends(get_async_db),current_customer = Depends(get_current_customer)):
+async def add_100p(point,db= Depends(get_async_db),current_customer = Depends(get_current_customer)):
     id = current_customer.customer_id
     name = current_customer.name
     email = current_customer.email
@@ -141,7 +143,6 @@ async def get_all_store(db = Depends(get_async_db)):
 @router.get("/get_items")
 async def get_items(store_id, db = Depends(get_async_db)):
     return await item.get_available(db,store_id)
-
 
 """ QRコード生成時の文字列取得 """
 @router.get("/get_qr/{order_id}")
