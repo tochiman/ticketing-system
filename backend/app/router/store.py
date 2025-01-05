@@ -1,11 +1,12 @@
 import uuid
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from models.store import OrderListResponse
 from database import get_async_db
 from models import item as models_item
 from crud import store, item
 from lib.auth import store_login, get_current_store
+from crud.store import status, update_status
 
 router = APIRouter(tags=["store"])
 
@@ -27,10 +28,31 @@ async def get_order_list(store_id: str, db = Depends(get_async_db)):
     return OrderListResponse(orders=orders)
 
 @router.get("/get_items")
-async def get_items(db = Depends(get_async_db), current_store = Depends(get_current_store)) -> List[models_item.Item]:
-    return await item.get_items(db, current_store.organization_id)
+async def get_items(db = Depends(get_async_db), current_store = Depends(get_current_store)) -> List[models_item.ItemWithAvailability]:
+    return await item.get_item_with_availability(db, current_store.organization_id, current_store.store_id)
 
+@router.post("/change_available")
+async def change_available(change_available_request: models_item.ChangeAvailableRequest, db = Depends(get_async_db), current_store = Depends(get_current_store)) -> bool:
+    return await item.change_available(db, current_store.store_id, change_available_request.item_id)
 
 @router.get("/get_item/{item_id}")
-async def get_item(item_id: uuid.UUID, db = Depends(get_async_db), _= Depends(get_current_store)) -> models_item.ItemResponse:
-    return await item.get_item(db, item_id)
+async def get_item(item_id: uuid.UUID, db = Depends(get_async_db), current_store = Depends(get_current_store)) -> models_item.ItemResponse:
+    return await item.get_item(db, item_id, current_store.organization_id)
+
+# ステータス更新 (0->1, 1->2, x->4)
+@router.post("/order/status")
+async def status(
+    order_id: str, new_status: int, db: AsyncSession = Depends(get_async_db), current_store=Depends(get_current_store)):
+    result = await status(db, order_id, new_status, current_store.store_id)
+    if not result:
+        raise HTTPException(status_code=400, detail="Invalid status transition")
+    return result
+
+# ステータス更新 (2 -> 3)
+@router.post("/order/qr/{order_id}/{qr_hash}")
+async def update_status(
+    order_id: str, qr_hash: str, db: AsyncSession = Depends(get_async_db), current_store=Depends(get_current_store)):
+    result = await update_status(db, order_id, qr_hash, current_store.store_id)
+    if not result:
+        raise HTTPException(status_code=400, detail="Invalid QR code or status transition")
+    return result
