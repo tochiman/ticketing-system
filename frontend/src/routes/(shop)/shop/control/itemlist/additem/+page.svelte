@@ -34,7 +34,7 @@
   
         <!-- 登録ボタン -->
         <div class="flex justify-center mt-6">
-          <Button color="blue" class="px-8" on:click={()=>goto(`./detail/edit`)}>編集</Button>
+          <Button color="blue" class="px-8" on:click={()=>goto(`../`)}>保存</Button>
         </div>
       </form>
     </Card>

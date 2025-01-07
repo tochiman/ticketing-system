@@ -27,10 +27,10 @@
           <div class="flex items-start space-x-4">
             <div class="w-24 h-24 bg-gray-200"></div>
             <div>
-              <h2 class="text-lg font-medium">{item.name}</h2>
               <Label for="itemName-{index}">商品名</Label>
-              <h2 class="text-lg font-medium">{item.setumei}</h2>
+              <h2 class="text-lg font-medium">{item.name}</h2>
               <Label for="setumei-{index}">説明</Label>
+              <h2 class="text-lg font-medium">{item.setumei}</h2>
             </div>
           </div>
   

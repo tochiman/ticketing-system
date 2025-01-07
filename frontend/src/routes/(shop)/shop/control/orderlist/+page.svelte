@@ -31,7 +31,7 @@
               <h2 class="text-lg font-medium">{order.title}</h2>
               <p class="text-gray-500">価格: {order.price}円</p>
               <p class="text-gray-500">ステータス: {order.status}</p>
-              <Button>詳細</Button>
+              <Button  on:click= {()=> goto ("./orderlist/detail")}>詳細</Button>
               <Button>削除</Button>
             </div>
           </div>
