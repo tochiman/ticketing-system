@@ -181,7 +181,7 @@ def get_url(user_type):
     if user_type == 1:
         return "customer"
     elif user_type == 2:
-        return "shop/login/foget-pw"
+        return f"shop/login/foget-pw"
     return None
 
 def send_reset_email(email: str, reset_token: str, user_type):
@@ -189,7 +189,7 @@ def send_reset_email(email: str, reset_token: str, user_type):
     message["From"] = GMAIL_ADDRESS
     message["To"] = email
     message["Subject"] = "パスワードリセットのご案内"
-    reset_url = f"{HOST}/{get_url(user_type)}?token={reset_token}".replace("//", "/")
+    reset_url = f"{HOST}/{get_url(user_type)}?token={reset_token}"
     with open('lib/email.html', 'r', encoding="utf-8") as f:
         html = f.read().replace("{{reset_url}}", reset_url)
     message.attach(MIMEText(html, "html"))
