@@ -52,7 +52,7 @@ async def get_stores(db):
     return stores
 
 
-async def veryfy_org(db, email, password):
+async def verify_org(db, email, password):
     stmt = select(models.Organization).where(models.Organization.email == email, models.Organization.disabled == False)
     org = (await db.execute(stmt)).scalars().first()
     if org and org.password == password:

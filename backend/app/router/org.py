@@ -80,7 +80,7 @@ async def delete_store(store_id: uuid.UUID, db = Depends(get_async_db), current_
 
 @router.post("/edit_org_profile", tags=["org-org"])
 async def edit_org_profile(edit_org_request:models_org.OrgEditRequest, db = Depends(get_async_db), current_org = Depends(get_current_organization)) -> models_org.OrgResponse:
-    if await org.veryfy_org(db, current_org.email, edit_org_request.password):
+    if await org.verify_org(db, current_org.email, edit_org_request.password):
         name = edit_org_request.name
         email = edit_org_request.email
         phone = edit_org_request.phone
