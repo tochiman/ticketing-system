@@ -23,3 +23,11 @@ class ItemResponse(ItemRequest):
 class Item(BaseSchema):
     name: str
     item_id: uuid.UUID
+
+
+class ItemWithAvailability(Item):
+    available: bool
+
+
+class ChangeAvailableRequest(BaseSchema):
+    item_id: str

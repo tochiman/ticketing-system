@@ -12,6 +12,18 @@ class OrgRequest(BaseSchema):
     password: str
 
 
+class OrgEditRequest(BaseSchema):
+    name: str = Field(..., max_items=256)
+    email: EmailStr
+    phone: str
+    password: str
+    new_password: str
+
+
+class OrgDelete(BaseSchema):
+    password: str
+
+
 class OrgResponse(BaseSchema):
     name: str
     email: EmailStr
@@ -44,6 +56,7 @@ class StoreResponse(BaseSchema):
     longitude: str
     open_time: time
     close_time: time
+
 
 class Store(BaseSchema):
     store_id: uuid.UUID
