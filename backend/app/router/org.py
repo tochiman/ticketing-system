@@ -66,14 +66,14 @@ async def store(store_id: uuid.UUID, db = Depends(get_async_db), _ = Depends(get
 
 @router.post("/delete_org", tags=["org-store"])
 async def delete_org(org_delete: models_org.OrgDelete, db = Depends(get_async_db), current_org = Depends(get_current_organization)):
-    if await org.veryfy_org(db, current_org.email, org_delete.password):
+    if await org.verify_org(db, current_org.email, org_delete.password):
         return await org.delete_org(db, current_org.organization_id)
     raise HTTPException(status_code=401, detail="パスワードが異なります")
 
 
 @router.post("/delete_store/{store_id}", tags=["org-store"])
 async def delete_store(store_id: uuid.UUID, db = Depends(get_async_db), current_org = Depends(get_current_organization)):
-    if org.veryfy_store(db, store_id, current_org.organization_id):
+    if org.verify_store(db, store_id, current_org.organization_id):
         return await org.delete_store_by_store_id(db, store_id)
     raise HTTPException(status_code=401, detail="指定の店舗はありません")
 
@@ -91,7 +91,7 @@ async def edit_org_profile(edit_org_request:models_org.OrgEditRequest, db = Depe
 
 @router.post("/edit_store_profile/{store_id}", tags=["org-store"])
 async def edit_store_profile(store_id: uuid.UUID, edit_store_request: models_org.StoreRequest, db = Depends(get_async_db), current_org = Depends(get_current_organization)) -> models_org.StoreResponse:
-    if org.veryfy_store(db, store_id, current_org.organization_id):
+    if org.verify_store(db, store_id, current_org.organization_id):
         name = edit_store_request.name
         email = edit_store_request.email
         password = edit_store_request.password

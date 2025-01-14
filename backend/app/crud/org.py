@@ -124,7 +124,7 @@ async def delete_store_by_store_id(db, store_id):
     return
 
 
-async def veryfy_store(db, store_id, organization_id):
+async def verify_store(db, store_id, organization_id):
     stmt = select(models.Store).where(models.Store.store_id == store_id, models.Store.organization_id == organization_id, models.Store.disabled == False)
     store = (await db.execute(stmt)).scalars().first()
     if store:
