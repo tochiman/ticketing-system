@@ -53,9 +53,9 @@ async def get_stores(db):
 
 
 async def veryfy_org(db, email, password):
-    stmt = select(models.Organization).where(models.Organization.email == email, models.Organization.password == password, models.Organization.disabled == False)
+    stmt = select(models.Organization).where(models.Organization.email == email, models.Organization.disabled == False)
     org = (await db.execute(stmt)).scalars().first()
-    if org:
+    if org and org.password == password:
         return True
     return False
 
