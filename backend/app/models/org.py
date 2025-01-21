@@ -56,6 +56,10 @@ class StoreResponse(BaseSchema):
     longitude: str
     open_time: time
     close_time: time
+    
+
+class StoreIdResponse(StoreResponse):
+    store_id: uuid.UUID
 
 
 class Store(BaseSchema):

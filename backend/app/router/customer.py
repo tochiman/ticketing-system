@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends # type: ignore
-
+from typing import List
 import hashlib
 from env import SALT
 import io
@@ -10,6 +10,7 @@ from database import get_async_db
 
 from models import customer as models_customer
 from models import order as models_order
+from models import org as models_org
 from crud import customer, order, payment, item, org
 
 from lib.auth import customer_login, customer_logout, get_current_customer
@@ -136,7 +137,7 @@ async def add_100p(point,db= Depends(get_async_db),current_customer = Depends(ge
 
 """ storeレコード全取得 """
 @router.get("/get_all_store")
-async def get_all_store(db = Depends(get_async_db)):
+async def get_all_store(db = Depends(get_async_db)) -> List[models_org.StoreIdResponse]:
     return await org.get_stores(db)
 
 """ store_idからitemレコード取得 """
