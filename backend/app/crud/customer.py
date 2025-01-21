@@ -4,11 +4,9 @@ from sqlalchemy.sql import select
 from sqlalchemy.orm import selectinload
 from lib import auth
 
-from models import Order, OrderDetail, Item, Payment,  Customer
-
 async def add_customer(db, name, email, password, points):
     await exist_email(db, email)
-    db_obj = models.Customer(name=name, email=email, password=password, points=points)
+    db_obj = models.Customer(name=name, email=email, password=password, points=points, disabled=False)
     db.add(db_obj)
     await db.flush()
     await db.refresh(db_obj)
@@ -55,13 +53,13 @@ async def edit_allergy(db, customer_id, allergy_list):
 
 async def get_order_list(customer_id,db):
     query = (
-        select(Order)
-        .join(OrderDetail)
-        .join(Item)
-        .join(Customer)
-        .join(Payment)
-        .where(Customer.customer_id == customer_id)
-        .options(selectinload(Order.order_details).joinedload(OrderDetail.item))
+        select(models.Order)
+        .join(models.OrderDetail)
+        .join(models.Item)
+        .join(models.Customer)
+        .join(models.Payment)
+        .where(models.Customer.customer_id == customer_id)
+        .options(selectinload(models.Order.order_details).joinedload(models.OrderDetail.item))
     )
     result = await db.execute(query)
     db_obj = result.scalars().all()
